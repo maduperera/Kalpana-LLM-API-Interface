@@ -56,17 +56,24 @@ graph TD
 
 ## 🧪 Step-by-Step Testing Scenarios
 
-### Scenario 1: General Query (No Document Attached)
+### Scenario 1: General Stateless Query (No Document Attached)
 1. Go to **🔌 LLM Providers** tab.
 2. Select your provider (**Groq**, **Google Gemini**, **OpenAI**, **Together**, **Cerebras**, **OpenRouter**).
 3. Enter your API Key and click **🔌 Register Provider**.
 4. Switch to **💬 Chat Playground**, leave `Active Pack ID` blank, and type your question (e.g. *"What is quantum computing?"*).
 
-### Scenario 2: Document-Based Q&A (PDF / Knowledge Pack Attached)
+### Scenario 2: O(1) Bounded Conversation Memory (Store Chat with RIF)
+1. Go to **📚 Knowledge Packs** tab -> **📝 Compile Text**.
+2. Type `"Conversation Session Start"` and click **Compile into Knowledge Pack**.
+3. Copy the generated `pack_id` (e.g. `kp_a1b2c3d4`).
+4. Go to **💬 Chat Playground**, paste `pack_id` into **Active Pack ID**, and send chat messages.
+5. Every chat turn is automatically absorbed into RIF memory state with constant $O(1)$ RAM usage!
+
+### Scenario 3: Document-Based Q&A (PDF / Knowledge Pack Attached)
 1. Go to **📚 Knowledge Packs** tab -> **📄 Compile File**.
 2. Select a PDF/TXT document and click **📄 Compile File into .kp**.
-3. Copy the generated `pack_id` (e.g. `kp_a1b2c3d4`).
-4. Go to **💬 Chat Playground**, paste the `pack_id` into **Active Pack ID**, and ask questions specific to your document!
+3. Copy the generated `pack_id` (e.g. `kp_b9f8e7d6`).
+4. Go to **💬 Chat Playground**, paste `pack_id` into **Active Pack ID**, and ask questions specific to your document!
 
 ---
 

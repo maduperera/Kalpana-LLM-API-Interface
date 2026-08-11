@@ -142,18 +142,24 @@
           <h3 style="color: var(--cyan-400); font-size: 1.1rem; margin-bottom: 0.75rem; display:flex; align-items:center; gap:0.5rem;">
             <span>🧪</span> Step-by-Step Testing Guide
           </h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem; line-height: 1.5;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; font-size: 0.85rem; line-height: 1.45;">
             <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--cyan-400);">
-              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Scenario 1: General Query (No Document)</strong>
-              1. Register your API key in <a href="#" onclick="showPanel('providers')" style="color:var(--cyan-400); text-decoration:underline;">🔌 LLM Providers</a>.<br>
-              2. Select your registered model in the dropdown.<br>
-              3. Leave <em>Active Pack ID</em> blank & ask any general question!
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">1. General Query (No Pack)</strong>
+              • Register key in <a href="#" onclick="showPanel('providers')" style="color:var(--cyan-400); text-decoration:underline;">🔌 LLM Providers</a>.<br>
+              • Leave <em>Active Pack ID</em> blank.<br>
+              • Ask any one-off question!
             </div>
             <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--purple-400);">
-              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Scenario 2: Document-Based Q&A (PDF / KP)</strong>
-              1. Go to <a href="#" onclick="showPanel('packs')" style="color:var(--purple-400); text-decoration:underline;">📚 Knowledge Packs</a> -> <em>Compile File</em>.<br>
-              2. Upload a PDF/TXT document & copy the generated <code>pack_id</code>.<br>
-              3. Paste <code>pack_id</code> into <em>Active Pack ID</em> & ask document questions!
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">2. O(1) Conversation Memory</strong>
+              • Compile <code>"Session Start"</code> in <a href="#" onclick="showPanel('packs')" style="color:var(--purple-400); text-decoration:underline;">📚 Knowledge Packs</a>.<br>
+              • Copy & paste <code>pack_id</code>.<br>
+              • Every chat turn auto-absorbs into RIF!
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--green-400);">
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">3. Document Q&A (PDF)</strong>
+              • Compile PDF in <a href="#" onclick="showPanel('packs')" style="color:var(--green-400); text-decoration:underline;">📚 Knowledge Packs</a>.<br>
+              • Copy & paste <code>pack_id</code>.<br>
+              • Ask document questions!
             </div>
           </div>
         </div>
