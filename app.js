@@ -590,7 +590,7 @@ function onProviderChange() {
   const defaults = {
     groq: { model: 'llama-3.1-8b-instant', url: '' },
     openai: { model: 'gpt-4o-mini', url: '' },
-    gemini: { model: 'gemini-1.5-flash', url: '' },
+    gemini: { model: 'gemini-2.5-flash', url: '' },
     together: { model: 'meta-llama/Llama-3-8b-chat-hf', url: '' },
     cerebras: { model: 'llama3.1-8b', url: '' },
     openrouter: { model: 'meta-llama/llama-3.1-8b-instruct:free', url: '' },
