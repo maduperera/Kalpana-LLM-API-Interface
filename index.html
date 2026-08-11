@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Kalpanā AI — Premium API Testing Interface for the RIF-Powered Memory Engine. Test chat completions, knowledge packs, model listings, and custom LLM provider registration." />
+  <title>Kalpanā AI — API Testing Interface</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🧠</text></svg>" />
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">☰</button>
+
+  <div class="app-shell">
+
+    <!-- ═══════════════ SIDEBAR ═══════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🧠</span>
+        <div class="brand-text">
+          <span class="brand-name">Kalpanā AI</span>
+          <span class="brand-sub">API Testing Interface</span>
+        </div>
+      </div>
+
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" data-panel="dashboard" onclick="switchPanel('dashboard')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+
+      <div class="nav-section-label">Testing</div>
+      <div class="nav-item" data-panel="chat" onclick="switchPanel('chat')">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Chat Playground</span>
+      </div>
+      <div class="nav-item" data-panel="knowledge" onclick="switchPanel('knowledge')">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Knowledge Packs</span>
+      </div>
+
+      <div class="nav-section-label">Configuration</div>
+      <div class="nav-item" data-panel="providers" onclick="switchPanel('providers')">
+        <span class="nav-icon">🔌</span>
+        <span class="nav-label">LLM Providers</span>
+      </div>
+      <div class="nav-item" data-panel="models" onclick="switchPanel('models')">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">Models</span>
+      </div>
+
+      <div class="nav-section-label">Reference</div>
+      <div class="nav-item" data-panel="docs" onclick="switchPanel('docs')">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">API Reference</span>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="api-status" id="sidebarStatus">
+          <span class="status-dot checking" id="statusDot"></span>
+          <span id="statusText">Checking API...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <main class="main-content">
+
+      <!-- ─── PANEL: Dashboard ─── -->
+      <section class="panel active" id="panel-dashboard">
+        <div class="panel-header">
+          <h1 class="panel-title">🧠 Dashboard</h1>
+          <p class="panel-subtitle">System health, API status, and overview of the Kalpanā RIF Engine</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid-4" id="dashboardStats">
+          <div class="stat-card">
+            <span class="stat-label">API Status</span>
+            <span class="stat-value text-green" id="statStatus">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Engine</span>
+            <span class="stat-value text-purple" id="statEngine">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Active Packs</span>
+            <span class="stat-value text-cyan" id="statPacks">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Version</span>
+            <span class="stat-value text-amber" id="statVersion">—</span>
+          </div>
+        </div>
+
+        <!-- Health JSON -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">⚡</span> Health Check Response</h3>
+            <button class="btn btn-secondary btn-sm" onclick="fetchHealth()">🔄 Refresh</button>
+          </div>
+          <div class="response-viewer">
+            <div class="response-header">
+              <span class="response-title">GET /health</span>
+              <span class="response-status" id="healthStatus">—</span>
+            </div>
+            <div class="response-body">
+              <pre id="healthJson">Click "Refresh" to load health data...</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Available Models Quick View -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">🤖</span> Default Models</h3>
+            <span class="card-badge badge-info" id="modelCount">—</span>
+          </div>
+          <div id="dashboardModels">
+            <div class="empty-state">
+              <span class="empty-icon">🤖</span>
+              <p class="empty-text">Loading models...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── PANEL: Chat Playground ─── -->
+      <section class="panel" id="panel-chat">
+        <div class="panel-header">
+          <h1 class="panel-title">💬 Chat Playground</h1>
+          <p class="panel-subtitle">Test chat completions with RIF context retrieval — full request/response inspection</p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Left: Chat Config + Input -->
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">⚙️</span> Request Configuration</h3>
+              </div>
+              <div class="endpoint-path">
+                <span class="method-badge method-post">POST</span>
+                /v1/chat/completions
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="chatModel">LLM Model</label>
+                  <select class="form-select" id="chatModel">
+                    <option value="qwen2.5-72b">Qwen 2.5 72B (Free)</option>
+                    <option value="qwen2.5-coder-32b">Qwen 2.5 Coder 32B (Free)</option>
+                    <option value="llama-3.1-8b">Llama 3.1 8B (Free)</option>
+                    <option value="custom">Custom (Registered Provider)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="chatPackId">Active Pack ID (optional)</label>
+                  <input class="form-input" type="text" id="chatPackId" placeholder="e.g. kp_a1b2c3d4" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="range-group" style="flex:1">
+                  <div class="range-header">
+                    <span class="range-label">Max Tokens</span>
+                    <span class="range-value" id="maxTokValue">512</span>
+                  </div>
+                  <input type="range" id="chatMaxTokens" min="32" max="4096" value="512" step="32" oninput="document.getElementById('maxTokValue').textContent=this.value" />
+                </div>
+                <div class="range-group" style="flex:1">
+                  <div class="range-header">
+                    <span class="range-label">Temperature</span>
+                    <span class="range-value" id="tempValue">0.7</span>
+                  </div>
+                  <input type="range" id="chatTemp" min="0" max="2" value="0.7" step="0.1" oninput="document.getElementById('tempValue').textContent=this.value" />
+                </div>
+              </div>
+
+              <!-- Chat Messages -->
+              <div class="chat-container" id="chatMessages">
+                <div class="empty-state">
+                  <span class="empty-icon">💬</span>
+                  <p class="empty-text">Start a conversation</p>
+                  <p class="empty-hint">Type a message below and send it to the Kalpanā API</p>
+                </div>
+              </div>
+
+              <!-- Chat Input -->
+              <div class="chat-input-area">
+                <textarea class="form-textarea" id="chatInput" placeholder="Type your message here..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+                <button class="btn btn-primary" id="chatSendBtn" onclick="sendChat()">🚀 Send</button>
+              </div>
+
+              <div class="flex justify-between items-center mt-4">
+                <button class="btn btn-secondary btn-sm" onclick="clearChat()">🗑️ Clear Chat</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Response Viewer -->
+          <div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📋</span> Full API Response</h3>
+                <button class="btn-copy" onclick="copyResponse('chatResponseJson')">📋 Copy</button>
+              </div>
+              <div class="response-viewer">
+                <div class="response-header">
+                  <span class="response-title">Response</span>
+                  <span class="response-status" id="chatResponseStatus">Waiting...</span>
+                </div>
+                <div class="response-body" style="max-height:600px">
+                  <pre id="chatResponseJson">Send a message to see the API response here...</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIF Metrics -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📊</span> RIF Context Metrics</h3>
+              </div>
+              <div class="grid-2" id="rifMetrics">
+                <div class="stat-card">
+                  <span class="stat-label">Retrieval Time</span>
+                  <span class="stat-value text-cyan" id="metricRetrievalTime">—</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Context Tokens</span>
+                  <span class="stat-value text-purple" id="metricContextTokens">—</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Token Reduction</span>
+                  <span class="stat-value text-green" id="metricTokenReduction">—</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-label">Generation Time</span>
+                  <span class="stat-value text-amber" id="metricGenTime">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── PANEL: Knowledge Packs ─── -->
+      <section class="panel" id="panel-knowledge">
+        <div class="panel-header">
+          <h1 class="panel-title">📚 Knowledge Packs</h1>
+          <p class="panel-subtitle">Compile documents into RIF Knowledge Packs, manage and download them</p>
+        </div>
+
+        <!-- Inner Tabs -->
+        <div class="inner-tabs">
+          <button class="inner-tab active" onclick="switchInnerTab('kp', 'compile-text', this)">📝 Compile Text</button>
+          <button class="inner-tab" onclick="switchInnerTab('kp', 'compile-file', this)">📄 Upload File</button>
+          <button class="inner-tab" onclick="switchInnerTab('kp', 'upload-kp', this)">📦 Import .kp</button>
+          <button class="inner-tab" onclick="switchInnerTab('kp', 'manage', this)">📋 Manage Packs</button>
+        </div>
+
+        <!-- Compile Text -->
+        <div class="inner-tab-content active" id="kp-compile-text">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📝</span> Compile Raw Text</h3>
+              </div>
+              <div class="endpoint-path">
+                <span class="method-badge method-post">POST</span>
+                /v1/knowledge_packs/compile
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="kpText">Document Text</label>
+                <textarea class="form-textarea" id="kpText" rows="10" placeholder="Paste your document text here..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="kpBandwidth">RIF Bandwidth</label>
+                <input class="form-input" type="number" id="kpBandwidth" value="2048" min="128" max="8192" />
+              </div>
+              <button class="btn btn-primary w-full" id="compileTextBtn" onclick="compileText()">⚙️ Compile into Knowledge Pack</button>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📋</span> Compilation Result</h3>
+                <button class="btn-copy" onclick="copyResponse('compileTextResult')">📋 Copy</button>
+              </div>
+              <div class="response-viewer">
+                <div class="response-header">
+                  <span class="response-title">Response</span>
+                  <span class="response-status" id="compileTextStatus">—</span>
+                </div>
+                <div class="response-body">
+                  <pre id="compileTextResult">Compile text to see the result...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upload File -->
+        <div class="inner-tab-content" id="kp-compile-file">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📄</span> Compile PDF/TXT File</h3>
+              </div>
+              <div class="endpoint-path">
+                <span class="method-badge method-post">POST</span>
+                /v1/knowledge_packs/compile_file
+              </div>
+              <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('kpFileInput').click()">
+                <div class="drop-icon">📁</div>
+                <div class="drop-text" id="fileDropText">Click or drag & drop a file here</div>
+                <div class="drop-hint">Supports .pdf and .txt files (up to 100MB)</div>
+                <input type="file" id="kpFileInput" accept=".pdf,.txt" onchange="handleFileSelect(event)" />
+              </div>
+              <div class="form-group mt-4">
+                <label class="form-label" for="kpFileBandwidth">RIF Bandwidth</label>
+                <input class="form-input" type="number" id="kpFileBandwidth" value="2048" min="128" max="8192" />
+              </div>
+              <button class="btn btn-primary w-full mt-4" id="compileFileBtn" onclick="compileFile()">📄 Compile File into .kp</button>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📋</span> File Compilation Result</h3>
+                <button class="btn-copy" onclick="copyResponse('compileFileResult')">📋 Copy</button>
+              </div>
+              <div class="response-viewer">
+                <div class="response-header">
+                  <span class="response-title">Response</span>
+                  <span class="response-status" id="compileFileStatus">—</span>
+                </div>
+                <div class="response-body">
+                  <pre id="compileFileResult">Upload a file to see the result...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Import .kp -->
+        <div class="inner-tab-content" id="kp-upload-kp">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📦</span> Import Existing .kp File</h3>
+              </div>
+              <div class="endpoint-path">
+                <span class="method-badge method-post">POST</span>
+                /v1/knowledge_packs/upload
+              </div>
+              <div class="file-drop-zone" id="kpDropZone" onclick="document.getElementById('kpUploadInput').click()">
+                <div class="drop-icon">📦</div>
+                <div class="drop-text" id="kpDropText">Click or drag & drop a .kp file here</div>
+                <div class="drop-hint">Import a previously compiled Knowledge Pack</div>
+                <input type="file" id="kpUploadInput" accept=".kp" onchange="handleKpSelect(event)" />
+              </div>
+              <button class="btn btn-primary w-full mt-4" id="uploadKpBtn" onclick="uploadKp()">📦 Import Knowledge Pack</button>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><span class="card-icon">📋</span> Import Result</h3>
+                <button class="btn-copy" onclick="copyResponse('uploadKpResult')">📋 Copy</button>
+              </div>
+              <div class="response-viewer">
+                <div class="response-header">
+                  <span class="response-title">Response</span>
+                  <span class="response-status" id="uploadKpStatus">—</span>
+                </div>
+                <div class="response-body">
+                  <pre id="uploadKpResult">Import a .kp file to see the result...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manage Packs -->
+        <div class="inner-tab-content" id="kp-manage">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-icon">📋</span> Active Knowledge Packs</h3>
+              <div class="flex gap-2">
+                <button class="btn btn-secondary btn-sm" onclick="listPacks()">🔄 Refresh</button>
+              </div>
+            </div>
+            <div class="endpoint-path">
+              <span class="method-badge method-get">GET</span>
+              /v1/knowledge_packs
+            </div>
+            <div id="packsList">
+              <div class="empty-state">
+                <span class="empty-icon">📦</span>
+                <p class="empty-text">No knowledge packs loaded</p>
+                <p class="empty-hint">Click "Refresh" to fetch active packs from the API</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── PANEL: Providers ─── -->
+      <section class="panel" id="panel-providers">
+        <div class="panel-header">
+          <h1 class="panel-title">🔌 LLM Providers</h1>
+          <p class="panel-subtitle">Register your own API keys for Groq, OpenAI, Together, Cerebras, or any OpenAI-compatible endpoint</p>
+        </div>
+
+        <div class="grid-2">
+          <!-- Register Provider -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-icon">🔑</span> Register Custom Provider</h3>
+            </div>
+            <div class="endpoint-path">
+              <span class="method-badge method-post">POST</span>
+              /v1/providers/register
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regProvider">Provider</label>
+              <select class="form-select" id="regProvider" onchange="onProviderChange()">
+                <option value="groq">Groq</option>
+                <option value="openai">OpenAI</option>
+                <option value="together">Together</option>
+                <option value="cerebras">Cerebras</option>
+                <option value="openrouter">OpenRouter</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regApiKey">API Key</label>
+              <input class="form-input" type="password" id="regApiKey" placeholder="gsk_... or sk-..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regModel">Model Name</label>
+              <input class="form-input" type="text" id="regModel" placeholder="e.g. llama-3.1-8b-instant" value="llama-3.1-8b-instant" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regBaseUrl">Base URL <span style="color:var(--text-muted);font-weight:400">(auto-detected for known providers)</span></label>
+              <input class="form-input" type="text" id="regBaseUrl" placeholder="https://api.groq.com/openai/v1" />
+            </div>
+            <button class="btn btn-primary w-full" id="regBtn" onclick="registerProvider()">🔌 Register Provider</button>
+
+            <div class="response-viewer mt-4">
+              <div class="response-header">
+                <span class="response-title">Registration Response</span>
+                <span class="response-status" id="regStatus">—</span>
+              </div>
+              <div class="response-body">
+                <pre id="regResult">Register a provider to see the response...</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Known Providers -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><span class="card-icon">🌐</span> Known Providers</h3>
+              <button class="btn btn-secondary btn-sm" onclick="fetchProviders()">🔄 Load</button>
+            </div>
+            <div class="endpoint-path">
+              <span class="method-badge method-get">GET</span>
+              /v1/providers
+            </div>
+            <div id="providersList">
+              <div class="empty-state">
+                <span class="empty-icon">🌐</span>
+                <p class="empty-text">Click "Load" to fetch providers</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── PANEL: Models ─── -->
+      <section class="panel" id="panel-models">
+        <div class="panel-header">
+          <h1 class="panel-title">🤖 Available Models</h1>
+          <p class="panel-subtitle">View all available models with context extension capabilities</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">🤖</span> Model Registry</h3>
+            <button class="btn btn-secondary btn-sm" onclick="fetchModels()">🔄 Refresh</button>
+          </div>
+          <div class="endpoint-path">
+            <span class="method-badge method-get">GET</span>
+            /v1/models
+          </div>
+          <div class="grid-3" id="modelsGrid">
+            <div class="empty-state" style="grid-column:1/-1">
+              <span class="empty-icon">🤖</span>
+              <p class="empty-text">Loading models...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context Extension Matrix -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">📊</span> Verified Context Extension Matrix</h3>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Native Context</th>
+                  <th>With Kalpanā RIF</th>
+                  <th>Extension at 3M Tokens</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--text-primary);font-weight:600">Qwen 2.5 72B</td>
+                  <td>32,768 tokens</td>
+                  <td style="color:var(--green-400);font-weight:600">Unlimited</td>
+                  <td style="color:var(--cyan-400);font-weight:600">91x</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-primary);font-weight:600">Llama 3.1 8B</td>
+                  <td>128,000 tokens</td>
+                  <td style="color:var(--green-400);font-weight:600">Unlimited</td>
+                  <td style="color:var(--cyan-400);font-weight:600">23x</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-primary);font-weight:600">Mistral 7B v0.3</td>
+                  <td>32,768 tokens</td>
+                  <td style="color:var(--green-400);font-weight:600">Unlimited</td>
+                  <td style="color:var(--cyan-400);font-weight:600">91x</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-primary);font-weight:600">Qwen 2 0.5B</td>
+                  <td>32,768 tokens</td>
+                  <td style="color:var(--green-400);font-weight:600">Unlimited</td>
+                  <td style="color:var(--cyan-400);font-weight:600">91x</td>
+                </tr>
+                <tr>
+                  <td style="color:var(--text-primary);font-weight:600">Phi-3 Mini 4K</td>
+                  <td>4,096 tokens</td>
+                  <td style="color:var(--green-400);font-weight:600">Unlimited</td>
+                  <td style="color:var(--cyan-400);font-weight:600">732x</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── PANEL: API Reference ─── -->
+      <section class="panel" id="panel-docs">
+        <div class="panel-header">
+          <h1 class="panel-title">📖 API Reference</h1>
+          <p class="panel-subtitle">Quick reference with endpoint details, curl commands, and Python examples</p>
+        </div>
+
+        <!-- Endpoint Reference Cards -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">⚡</span> GET /health</h3>
+            <span class="card-badge badge-success">System</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">Verify API status, active engine, and available default models.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">curl</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre>curl -X GET "https://madurox-kalpana-api-cpu.hf.space/health"</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">💬</span> POST /v1/chat/completions</h3>
+            <span class="card-badge badge-info">Chat</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">Send a message and get a response powered by RIF context retrieval. Optionally attach a Knowledge Pack ID for document-aware answers.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Python</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre><span class="kw">import</span> requests
+
+BASE_URL = <span class="str">"https://madurox-kalpana-api-cpu.hf.space"</span>
+
+<span class="comment"># Simple chat request</span>
+response = requests.post(
+    <span class="str">f"{BASE_URL}/v1/chat/completions"</span>,
+    json={
+        <span class="str">"model"</span>: <span class="str">"qwen2.5-72b"</span>,
+        <span class="str">"messages"</span>: [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}],
+        <span class="str">"max_tokens"</span>: <span class="num">512</span>,
+        <span class="str">"temperature"</span>: <span class="num">0.7</span>
+    }
+)
+<span class="fn">print</span>(response.json()[<span class="str">"choices"</span>][<span class="num">0</span>][<span class="str">"message"</span>][<span class="str">"content"</span>])</pre>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Python — With Knowledge Pack</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre><span class="comment"># Chat with a Knowledge Pack for document-aware answers</span>
+response = requests.post(
+    <span class="str">f"{BASE_URL}/v1/chat/completions"</span>,
+    json={
+        <span class="str">"model"</span>: <span class="str">"qwen2.5-72b"</span>,
+        <span class="str">"messages"</span>: [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Summarize the key points."</span>}],
+        <span class="str">"active_pack_id"</span>: <span class="str">"kp_a1b2c3d4"</span>,
+        <span class="str">"max_tokens"</span>: <span class="num">512</span>,
+        <span class="str">"temperature"</span>: <span class="num">0.7</span>
+    }
+)
+<span class="fn">print</span>(<span class="str">"Answer:"</span>, response.json()[<span class="str">"choices"</span>][<span class="num">0</span>][<span class="str">"message"</span>][<span class="str">"content"</span>])
+<span class="fn">print</span>(<span class="str">"Token Savings:"</span>, response.json()[<span class="str">"cost_comparison"</span>][<span class="str">"savings"</span>])</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">📚</span> POST /v1/knowledge_packs/compile</h3>
+            <span class="card-badge badge-warning">Knowledge Packs</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">Compile raw text into a RIF Knowledge Pack. Returns a pack_id for use in chat.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Python</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre>response = requests.post(
+    <span class="str">f"{BASE_URL}/v1/knowledge_packs/compile"</span>,
+    json={
+        <span class="str">"text"</span>: <span class="str">"Your long document text here..."</span>,
+        <span class="str">"bandwidth"</span>: <span class="num">2048</span>
+    }
+)
+pack_id = response.json()[<span class="str">"pack_id"</span>]
+<span class="fn">print</span>(<span class="str">"Pack ID:"</span>, pack_id)</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">📄</span> POST /v1/knowledge_packs/compile_file</h3>
+            <span class="card-badge badge-warning">Knowledge Packs</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">Upload and compile a PDF or TXT file into a Knowledge Pack.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Python</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre>files = {<span class="str">"file"</span>: (<span class="str">"document.pdf"</span>, <span class="fn">open</span>(<span class="str">"document.pdf"</span>, <span class="str">"rb"</span>), <span class="str">"application/pdf"</span>)}
+response = requests.post(
+    <span class="str">f"{BASE_URL}/v1/knowledge_packs/compile_file"</span>,
+    files=files,
+    data={<span class="str">"bandwidth"</span>: <span class="num">2048</span>}
+)
+<span class="fn">print</span>(<span class="str">"Pack ID:"</span>, response.json()[<span class="str">"pack_id"</span>])</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">🔌</span> POST /v1/providers/register</h3>
+            <span class="card-badge badge-info">Providers</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">Register your own LLM API key (Groq, OpenAI, Together, Cerebras, OpenRouter, or custom).</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">Python</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre>response = requests.post(
+    <span class="str">f"{BASE_URL}/v1/providers/register"</span>,
+    json={
+        <span class="str">"provider"</span>: <span class="str">"groq"</span>,
+        <span class="str">"api_key"</span>: <span class="str">"gsk_your_groq_key_here"</span>,
+        <span class="str">"model"</span>: <span class="str">"llama-3.1-8b-instant"</span>
+    }
+)
+<span class="fn">print</span>(response.json())</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">🤖</span> GET /v1/models</h3>
+            <span class="card-badge badge-success">Models</span>
+          </div>
+          <p class="mb-4" style="color:var(--text-secondary);font-size:0.88rem">List all available models with verified context limits and Kalpanā RIF extension capabilities.</p>
+          <div class="code-block">
+            <div class="code-block-header">
+              <span class="code-block-lang">curl</span>
+              <button class="btn-copy" onclick="copyCodeBlock(this)">📋 Copy</button>
+            </div>
+            <div class="code-block-body">
+              <pre>curl -X GET "https://madurox-kalpana-api-cpu.hf.space/v1/models"</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><span class="card-icon">📋</span> Other Knowledge Pack Endpoints</h3>
+            <span class="card-badge badge-warning">Knowledge Packs</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Endpoint</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="method-badge method-get">GET</span></td>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">/v1/knowledge_packs</td>
+                  <td>List all active knowledge packs</td>
+                </tr>
+                <tr>
+                  <td><span class="method-badge method-get">GET</span></td>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">/v1/knowledge_packs/{pack_id}/download</td>
+                  <td>Download a .kp file</td>
+                </tr>
+                <tr>
+                  <td><span class="method-badge method-post">POST</span></td>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">/v1/knowledge_packs/upload</td>
+                  <td>Import a .kp file</td>
+                </tr>
+                <tr>
+                  <td><span class="method-badge method-delete">DEL</span></td>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">/v1/knowledge_packs/{pack_id}</td>
+                  <td>Delete a knowledge pack</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
