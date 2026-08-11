@@ -7,9 +7,6 @@ A premium, dark-themed single-page web application for interactively testing all
 ## 🔗 Links & Official Documentation
 
 - **Interactive OpenAPI Docs**: [https://madurox-kalpana-api-cpu.hf.space/docs](https://madurox-kalpana-api-cpu.hf.space/docs)
-- **Live Hugging Face Space**: [MaduRox/Kalpana-API-CPU](https://huggingface.co/spaces/MaduRox/Kalpana-API-CPU)
-- **GitHub Repository**: [maduperera/Kalpana-LLM-API-Interface](https://github.com/maduperera/Kalpana-LLM-API-Interface)
-- **API Base URL**: `https://madurox-kalpana-api-cpu.hf.space`
 
 ---
 
@@ -20,19 +17,19 @@ Kalpanā RIF (Recurrent Information Flow) evolves traditional RAG by replacing b
 ```mermaid
 graph TD
     subgraph Traditional RAG Pipeline
-        A1[100K-3M Token Document] --> B1[Chunking & Dense Embeddings]
-        B1 --> C1[(Vector DB - Pinecone/Qdrant)\nRAM Grows Linearly O N]
-        C1 --> D1[Top-K Similarity Search\nHigh Latency 50-200ms]
-        D1 --> E1[Uncompressed Context Injected\nHigh Token Bill $$$]
-        E1 --> F1[Remote LLM]
+        A1["100K-3M Token Document"] --> B1["Chunking & Dense Embeddings"]
+        B1 --> C1["Vector DB - Pinecone / Qdrant<br/>RAM Grows Linearly O(N)"]
+        C1 --> D1["Top-K Similarity Search<br/>High Latency 50-200ms"]
+        D1 --> E1["Uncompressed Context Injected<br/>High Token Bill $$$"]
+        E1 --> F1["Remote LLM"]
     end
 
     subgraph Kalpanā RIF Holographic Pipeline
-        A2[100K-3M Token Document] --> B2[Kalpanā Phase-Conjugate Chunker]
-        B2 --> C2[Knowledge Pack .kp\nO 1 Constant Bounded RAM ~8MB]
-        C2 --> D2[Holographic Matrix Retrieval\nSub-5ms Latency]
-        D2 --> E2[Extracted RIF Context ~1.6K Tokens\n90%-99% Token Cost Savings]
-        E2 --> F2[Registered Provider LLM\nGroq / OpenAI / Gemini / etc.]
+        A2["100K-3M Token Document"] --> B2["Kalpanā Phase-Conjugate Chunker"]
+        B2 --> C2["Knowledge Pack (.kp)<br/>O(1) Constant Bounded RAM ~8MB"]
+        C2 --> D2["Holographic Matrix Retrieval<br/>Sub-5ms Latency"]
+        D2 --> E2["Extracted RIF Context ~1.6K Tokens<br/>90%-99% Token Cost Savings"]
+        E2 --> F2["Registered Provider LLM<br/>Groq / OpenAI / Gemini / etc."]
     end
 ```
 
