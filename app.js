@@ -220,7 +220,11 @@ async function sendChat() {
       }
       document.getElementById('metricGenTime').textContent = `${data.generation_time_sec}s`;
 
-      showToast('success', 'Response Received', `Model: ${data.model} • ${data.usage?.total_tokens || 0} tokens`);
+      if (data.provider === 'kalpana-rif-fallback' || reply.includes('HTTP 401') || reply.includes('HF Router notice')) {
+        showToast('info', 'Register Provider Key', 'HF Serverless Router requires authentication. Click "LLM Providers" tab to connect your free Groq / OpenAI key!');
+      } else {
+        showToast('success', 'Response Received', `Model: ${data.model} • ${data.usage?.total_tokens || 0} tokens`);
+      }
     } else {
       const errMsg = data.detail || data.error || 'Unknown error';
       document.getElementById('chatResponseJson').innerHTML = syntaxHighlight(data);
