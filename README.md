@@ -10,26 +10,25 @@ A premium, dark-themed single-page web application for interactively testing all
 
 ---
 
-## 🏗️ Architectural Pipeline: Traditional RAG vs Kalpanā RIF
+## 🏗️ Architectural RAG Pipeline
 
-Kalpanā RIF (Recurrent Information Flow) evolves traditional RAG by replacing bloated vector databases with a **bounded O(1) constant-size holographic state (~8 MB)**.
+The diagram below illustrates how Kalpanā AI indexes documents into a bounded **O(1) Knowledge Pack (`.kp`)**, retrieves relevant context in sub-5ms, and feeds augmented prompts to your registered LLM provider.
 
 ```mermaid
-graph TD
-    subgraph Traditional RAG Pipeline
-        A1["100K-3M Token Document"] --> B1["Chunking & Dense Embeddings"]
-        B1 --> C1["Vector DB - Pinecone / Qdrant<br/>RAM Grows Linearly O(N)"]
-        C1 --> D1["Top-K Similarity Search<br/>High Latency 50-200ms"]
-        D1 --> E1["Uncompressed Context Injected<br/>High Token Bill $$$"]
-        E1 --> F1["Remote LLM"]
+graph LR
+    subgraph Indexing Phase
+        Docs["Documents (PDF / Text)"] -->|"Chunking"| Chunks["Text Chunks"]
+        Chunks -->|"Vectorize & Store"| KP["Knowledge Pack (.kp)<br/>O(1) Bounded State ~8MB"]
     end
 
-    subgraph Kalpanā RIF Holographic Pipeline
-        A2["100K-3M Token Document"] --> B2["Kalpanā Phase-Conjugate Chunker"]
-        B2 --> C2["Knowledge Pack (.kp)<br/>O(1) Constant Bounded RAM ~8MB"]
-        C2 --> D2["Holographic Matrix Retrieval<br/>Sub-5ms Latency"]
-        D2 --> E2["Extracted RIF Context ~1.6K Tokens<br/>90%-99% Token Cost Savings"]
-        E2 --> F2["Registered Provider LLM<br/>Groq / OpenAI / Gemini / etc."]
+    subgraph Query & Generation Phase
+        User["User"] -->|"Query"| Q["User Query"]
+        Q -->|"Search"| KP
+        KP -->|"Retrieve"| Ctx["Relevant Contexts"]
+        Q --> Ctx
+        Ctx -->|"Prompt Augment"| LLM["LLM (Groq / Gemini / OpenAI)"]
+        LLM -->|"Generate"| Resp["Response"]
+        Resp --> User
     end
 ```
 
