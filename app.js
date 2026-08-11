@@ -528,7 +528,19 @@ async function registerProvider() {
     document.getElementById('regStatus').style.color = res.ok ? 'var(--green-400)' : 'var(--red-400)';
 
     if (res.ok) {
-      showToast('success', 'Provider Registered!', `${provider}/${model} is now available`);
+      showToast('success', 'Provider Registered!', `${provider}/${model} is now active in Chat Playground!`);
+      
+      // Auto-add and select the registered model in Chat Playground dropdown
+      const chatSelect = document.getElementById('chatModel');
+      const optVal = model || 'custom';
+      let existingOpt = Array.from(chatSelect.options).find(o => o.value === optVal);
+      if (!existingOpt) {
+        existingOpt = document.createElement('option');
+        chatSelect.appendChild(existingOpt);
+      }
+      existingOpt.value = optVal;
+      existingOpt.textContent = `✨ ${provider.toUpperCase()}: ${model} (Registered Key)`;
+      chatSelect.value = optVal;
     } else {
       showToast('error', 'Registration Failed', data.detail || 'Unknown error');
     }
