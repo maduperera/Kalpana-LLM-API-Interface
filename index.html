@@ -137,6 +137,27 @@
           <p class="panel-subtitle">Test chat completions with RIF context retrieval — full request/response inspection</p>
         </div>
 
+        <!-- 🧪 STEP-BY-STEP TESTING GUIDE BANNER -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(6,182,212,0.12)); border: 1px solid var(--purple-500); margin-bottom: 1.5rem; padding: 1.25rem;">
+          <h3 style="color: var(--cyan-400); font-size: 1.1rem; margin-bottom: 0.75rem; display:flex; align-items:center; gap:0.5rem;">
+            <span>🧪</span> Step-by-Step Testing Guide
+          </h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem; line-height: 1.5;">
+            <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--cyan-400);">
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Scenario 1: General Query (No Document)</strong>
+              1. Register your API key in <a href="#" onclick="showPanel('providers')" style="color:var(--cyan-400); text-decoration:underline;">🔌 LLM Providers</a>.<br>
+              2. Select your registered model in the dropdown.<br>
+              3. Leave <em>Active Pack ID</em> blank & ask any general question!
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--purple-400);">
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Scenario 2: Document-Based Q&A (PDF / KP)</strong>
+              1. Go to <a href="#" onclick="showPanel('packs')" style="color:var(--purple-400); text-decoration:underline;">📚 Knowledge Packs</a> -> <em>Compile File</em>.<br>
+              2. Upload a PDF/TXT document & copy the generated <code>pack_id</code>.<br>
+              3. Paste <code>pack_id</code> into <em>Active Pack ID</em> & ask document questions!
+            </div>
+          </div>
+        </div>
+
         <div class="grid-2">
           <!-- Left: Chat Config + Input -->
           <div>
@@ -151,16 +172,19 @@
 
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label" for="chatModel">LLM Model</label>
+                  <label class="form-label" for="chatModel">Registered LLM Provider</label>
                   <select class="form-select" id="chatModel">
-                    <option value="qwen2.5-72b">Qwen 2.5 72B (HF Serverless)</option>
-                    <option value="qwen2.5-coder-32b">Qwen 2.5 Coder 32B (HF Serverless)</option>
-                    <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (Registered Key)</option>
-                    <option value="custom">Custom (Registered Provider Key)</option>
+                    <option value="groq">Groq (llama-3.1-8b-instant)</option>
+                    <option value="gemini-2.5-flash">Google Gemini 2.5 Flash</option>
+                    <option value="openai">OpenAI (gpt-4o-mini)</option>
+                    <option value="together">Together AI</option>
+                    <option value="cerebras">Cerebras</option>
+                    <option value="openrouter">OpenRouter</option>
+                    <option value="custom">Custom Registered Key</option>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="chatPackId">Active Pack ID (optional)</label>
+                  <label class="form-label" for="chatPackId">Active Pack ID (optional for RIF context)</label>
                   <input class="form-input" type="text" id="chatPackId" placeholder="e.g. kp_a1b2c3d4" />
                 </div>
               </div>
