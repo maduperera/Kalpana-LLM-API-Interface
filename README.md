@@ -26,7 +26,10 @@ Traditional RAG and standard chat applications suffer from **linear token inflat
 
 | Feature / Metric | Standard Chat & Traditional RAG | Kalpanā RIF Engine |
 |---|---|---|
-| **Chat Memory Token Accumulation** | **Explodes Linearly $O(N)$**<br/>Every new turn appends all previous messages. By turn 30, prompt tokens inflate by 30x ($$$ bill). | **Flat Bounded $O(1)$ Memory**<br/>Every new turn auto-absorbs into a constant ~6.3 MB Knowledge Pack (`.kp`). Prompt tokens stay flat (~300 tokens) forever! |
+| **Chat Memory Token Accumulation** | **Explodes Linearly $O(N)$**<br/>Every new turn appends all previous messages. By turn 30, prompt tokens inflate by 30x ($$$ bill). | **Flat Bounded $O(1)$ Memory**<br/>Every new turn auto-absorbs into a constant ~6.3 MB Knowledge Pack (`.kp`). Prompt tokens stay flat (~1,600 tokens max) forever! |
+| **Context Retrieval Window** | Grabs only 3 small isolated vector chunks (~300 tokens) | **Extracts up to 15 multi-angle chunks (~1,600 tokens max)** |
+| **Broad Overview Queries** (*"Who are the characters?", "Summarize the story"*) | Fails — returns local fragment chunks from just 1 page | **Global Timeline Sampling**: Automatically samples representative chunks across the beginning, middle, and end of the story arc |
+| **Story & Conversation Continuity** | Each query treats chunks as disconnected fragments | **Recurrent State Fusion**: Updates the state matrix recurrently so semantic relationships between characters and events persist |
 | **3 Million Token Storage Footprint** | **5 GB – 15 GB Heavy Vector DBs**<br/>Requires Pinecone/Qdrant storing thousands of dense neural embedding vectors. | **Fixed ~6.3 MB `.kp` File**<br/>3 Million tokens compress into a single bounded ~6.3 MB matrix file. |
 | **Hardware Requirements** | **Requires Heavy GPUs**<br/>Needs GPU clusters to compute dense neural embeddings (`text-embedding-3`, `bge-large`). | **Runs on Lightweight CPUs**<br/>Matrix retrieval executes in **<5ms on standard cheap CPU servers**. |
 | **Retrieval Speed & Latency** | 50ms – 300ms (Neural network embedding + ANN vector search) | **<5 ms** (CPU-native holographic sparse matrix dot product) |
