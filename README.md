@@ -16,8 +16,8 @@ Traditional RAG and standard chat applications suffer from **linear token inflat
 
 | Feature / Metric | Standard Chat & Traditional RAG | Kalpanā RIF Engine |
 |---|---|---|
-| **Chat Memory Token Accumulation** | **Explodes Linearly $O(N)$**<br/>Every new turn appends all previous messages. By turn 30, prompt tokens inflate by 30x ($$$ bill). | **Flat Bounded $O(1)$ Memory**<br/>Every new turn auto-absorbs into a constant ~8 MB Knowledge Pack (`.kp`). Prompt tokens stay flat (~300 tokens) forever! |
-| **3 Million Token Storage Footprint** | **5 GB – 15 GB Heavy Vector DBs**<br/>Requires Pinecone/Qdrant storing thousands of dense neural embedding vectors. | **Fixed ~8 MB `.kp` File**<br/>3 Million tokens compress into a single bounded ~8 MB matrix file. |
+| **Chat Memory Token Accumulation** | **Explodes Linearly $O(N)$**<br/>Every new turn appends all previous messages. By turn 30, prompt tokens inflate by 30x ($$$ bill). | **Flat Bounded $O(1)$ Memory**<br/>Every new turn auto-absorbs into a constant ~6.3 MB Knowledge Pack (`.kp`). Prompt tokens stay flat (~300 tokens) forever! |
+| **3 Million Token Storage Footprint** | **5 GB – 15 GB Heavy Vector DBs**<br/>Requires Pinecone/Qdrant storing thousands of dense neural embedding vectors. | **Fixed ~6.3 MB `.kp` File**<br/>3 Million tokens compress into a single bounded ~6.3 MB matrix file. |
 | **Hardware Requirements** | **Requires Heavy GPUs**<br/>Needs GPU clusters to compute dense neural embeddings (`text-embedding-3`, `bge-large`). | **Runs on Lightweight CPUs**<br/>Matrix retrieval executes in **<5ms on standard cheap CPU servers**. |
 | **Retrieval Speed & Latency** | 50ms – 300ms (Neural network embedding + ANN vector search) | **<5 ms** (CPU-native holographic sparse matrix dot product) |
 | **Token Bill Cost Savings** | 0% (Pay for full document + full chat history every query) | **90% – 99.8% Cost Savings** |
@@ -32,7 +32,7 @@ The diagram below illustrates how Kalpanā AI indexes documents into a bounded *
 graph LR
     subgraph Indexing Phase
         Docs["Documents (PDF / Text)"] -->|"Chunking"| Chunks["Text Chunks"]
-        Chunks -->|"Vectorize & Store"| KP["Knowledge Pack (.kp)<br/>O(1) Bounded State ~8MB"]
+        Chunks -->|"Vectorize & Store"| KP["Knowledge Pack (.kp)<br/>O(1) Bounded State ~6.3MB"]
     end
 
     subgraph Query & Generation Phase
@@ -63,7 +63,7 @@ sequenceDiagram
 
     User->>API: 1. Compile Session Text ("Session Start")
     API->>RIF: Initialize State Vector
-    RIF-->>KP: Create Bounded State (~8 MB)
+    RIF-->>KP: Create Bounded State (~6.3 MB)
     API-->>User: Return pack_id (e.g. kp_a1b2c3d4)
 
     loop Chat Turns (Turns 1 to N)
@@ -92,7 +92,7 @@ sequenceDiagram
 
     User->>API: 1. Upload PDF / Text File (100K to 3M Tokens)
     API->>RIF: 2. Parse & Matrix Vectorize Chunks
-    RIF-->>KP: 3. Compress into Bounded State (.kp ~8 MB)
+    RIF-->>KP: 3. Compress into Bounded State (.kp ~6.3 MB)
     API-->>User: 4. Return pack_id (e.g. kp_b9f8e7d6)
 
     User->>API: 5. Send Question + active_pack_id
@@ -139,7 +139,7 @@ sequenceDiagram
 2. Select a PDF/TXT document and click **📄 Compile File into .kp**.
 3. Copy the generated `pack_id` (e.g. `kp_b9f8e7d6`).
 4. Go to **💬 Chat Playground**, paste `pack_id` into **Active Pack ID**, and ask questions specific to your document!
-5. Document context is compressed into constant $O(1)$ ~8 MB state with sub-5ms retrieval and **90%+ cost savings**!
+5. Document context is compressed into constant $O(1)$ ~6.3 MB state with sub-5ms retrieval and **90%+ cost savings**!
 
 ---
 
