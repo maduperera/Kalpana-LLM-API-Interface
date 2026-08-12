@@ -17,7 +17,7 @@
 ## 🔗 Links & Official Documentation
 
 - **Interactive OpenAPI Docs**: [https://madurox-kalpana-api-cpu.hf.space/docs](https://madurox-kalpana-api-cpu.hf.space/docs)
-- **Live Web Testing Interface**: [Test API Endpoints in Live App](https://htmlpreview.github.io/?https://github.com/maduperera/Kalpana-LLM-API-Interface/blob/main/index.html) *(Interactively test all API endpoints directly in your browser. Complete step-by-step testing instructions and sequence diagrams are detailed below).*
+- **Live Web Testing Interface**: [Test API Endpoints in Live App](https://htmlpreview.github.io/?https://github.com/madushaperera-gif/-Kalpan-AI-BYO-LLM-Zero-Token-Burn-Engine/blob/main/index.html) *(Interactively test all API endpoints directly in your browser. Complete step-by-step testing instructions and sequence diagrams are detailed below).*
 
 ---
 
