@@ -140,26 +140,20 @@
         <!-- 🧪 STEP-BY-STEP TESTING GUIDE BANNER -->
         <div class="card" style="background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(6,182,212,0.12)); border: 1px solid var(--purple-500); margin-bottom: 1.5rem; padding: 1.25rem;">
           <h3 style="color: var(--cyan-400); font-size: 1.1rem; margin-bottom: 0.75rem; display:flex; align-items:center; gap:0.5rem;">
-            <span>🧪</span> Step-by-Step Testing Guide
+            <span>🧪</span> Step-by-Step RIF Testing Guide
           </h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; font-size: 0.85rem; line-height: 1.45;">
-            <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--cyan-400);">
-              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">1. General Query (No Pack)</strong>
-              • Register key in <a href="#" onclick="showPanel('providers')" style="color:var(--cyan-400); text-decoration:underline;">🔌 LLM Providers</a>.<br>
-              • Leave <em>Active Pack ID</em> blank.<br>
-              • Ask any stateless question!
-            </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem; line-height: 1.5;">
             <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--purple-400);">
-              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">2. O(1) Conversation Memory</strong>
-              • Compile <code>"Session Start"</code> in <a href="#" onclick="showPanel('packs')" style="color:var(--purple-400); text-decoration:underline;">📚 Knowledge Packs</a>.<br>
-              • Paste <code>pack_id</code> into Chat.<br>
-              • Turns auto-absorb in O(1) memory!
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Option 1: O(1) Conversation Memory (Chat History)</strong>
+              1. Register API key in <a href="#" onclick="showPanel('providers')" style="color:var(--cyan-400); text-decoration:underline;">🔌 LLM Providers</a>.<br>
+              2. Go to <a href="#" onclick="showPanel('packs')" style="color:var(--purple-400); text-decoration:underline;">📚 Knowledge Packs</a> -> Compile <code>"Session Start"</code>.<br>
+              3. Paste <code>pack_id</code> into <em>Active Pack ID</em>. Every chat turn auto-absorbs into RIF without token accumulation!
             </div>
             <div style="background: rgba(0,0,0,0.3); padding: 0.85rem; border-radius: 8px; border-left: 3px solid var(--green-400);">
-              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">3. O(1) Document Q&A (PDF)</strong>
-              • Compile PDF in <a href="#" onclick="showPanel('packs')" style="color:var(--green-400); text-decoration:underline;">📚 Knowledge Packs</a>.<br>
-              • Paste <code>pack_id</code> into Chat.<br>
-              • Query massive files in O(1) memory!
+              <strong style="color: var(--text-primary); display:block; margin-bottom:0.3rem;">Option 2: O(1) Document Q&A (PDF / Large Files)</strong>
+              1. Go to <a href="#" onclick="showPanel('packs')" style="color:var(--green-400); text-decoration:underline;">📚 Knowledge Packs</a> -> <em>Compile File</em>.<br>
+              2. Upload a PDF/TXT file & copy generated <code>pack_id</code>.<br>
+              3. Paste <code>pack_id</code> into <em>Active Pack ID</em> & ask document questions with sub-5ms latency!
             </div>
           </div>
         </div>
